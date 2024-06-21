@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * and some desktop browsers.
  *
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "de.climateguard.application" })
 @Theme(value = "climateguard", variant = Lumo.DARK)
 public class Application implements AppShellConfigurator {
 
