@@ -44,6 +44,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         Button buttonPrimary = new Button();
         Button buttonSecondary = new Button();
         ComboBox<String> comboBox2 = new ComboBox<>();
+        Button buttonTertiary = new Button();
 
         VerticalLayout layoutColumn3 = new VerticalLayout();
         HorizontalLayout layoutRow3 = new HorizontalLayout();
@@ -99,6 +100,12 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         buttonSecondary.setText("Change Mode");
         buttonSecondary.setWidth("100%");
         buttonSecondary.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+
+        buttonTertiary.setText("Refresh");
+        buttonTertiary.setWidth("100%");
+        buttonTertiary.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        buttonTertiary.getStyle().set("Font-Size", "large");
+        buttonTertiary.setHeight("3vh");
 
         layoutColumn3.setWidth("100%");
         layoutColumn3.getStyle().set("flex-grow", "1");
@@ -184,6 +191,8 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutRow4.add(layoutColumn8);
         layoutRow4.add(layoutColumn9);
 
+        layoutColumn3.add(buttonTertiary);
+
         try {
             mqttManager = new MQTTManager("tcp://climateguard-360.local:1883", "Vaadin", this);
             buttonPrimary.addClickListener(event -> {
@@ -238,8 +247,6 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
             } else if (topic.endsWith("/RainSensor")) {
                 rainSensorField.setValue(Boolean.parseBoolean(value) ? "Es regnet gerade" : "Es regnet nicht");
             }
-            // Entfernen von ui.push(), da es ohne diese Zeile auch ohne expliziten Push
-            // funktionieren sollte
         }));
     }
 

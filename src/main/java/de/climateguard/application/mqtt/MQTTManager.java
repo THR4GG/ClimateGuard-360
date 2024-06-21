@@ -7,7 +7,6 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
 import de.climateguard.application.views.climateguard.ClimateGuardView;
 
 public class MQTTManager implements MqttCallback {
@@ -29,6 +28,7 @@ public class MQTTManager implements MqttCallback {
             client.disconnect();
         }
 
+        // Verwenden einer einzigartigen Client-ID für jede Verbindung
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
@@ -40,17 +40,24 @@ public class MQTTManager implements MqttCallback {
     }
 
     public void subscribeToTopics(String baseTopic) throws MqttException {
-        client.subscribe(baseTopic + "/Temperature");
-        client.subscribe(baseTopic + "/Humidity");
-        client.subscribe(baseTopic + "/Pressure");
-        client.subscribe(baseTopic + "/AirQuality");
-        client.subscribe(baseTopic + "/LightIntensity");
-        client.subscribe(baseTopic + "/RainSensor");
+        String[] topics = {
+                baseTopic + "/Temperature",
+                baseTopic + "/Humidity",
+                baseTopic + "/Pressure",
+                baseTopic + "/AirQuality",
+                baseTopic + "/LightIntensity",
+                baseTopic + "/RainSensor"
+        };
+
+        for (String topic : topics) {
+            System.out.println("Subscribing to topic: " + topic);
+            client.subscribe(topic);
+        }
     }
 
     public void publishMessage(String topic, String message) throws MqttException {
         MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-        mqttMessage.setQos(2);
+        mqttMessage.setQos(2); // Höchste QoS für Zuverlässigkeit
         client.publish(topic, mqttMessage);
     }
 
