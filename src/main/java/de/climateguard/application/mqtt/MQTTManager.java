@@ -73,7 +73,8 @@ public class MQTTManager implements MqttCallback {
                 baseTopic + "/Pressure",
                 baseTopic + "/AirQuality",
                 baseTopic + "/LightIntensity",
-                baseTopic + "/RainSensor"
+                baseTopic + "/RainSensor",
+                baseTopic + "/Mode"
         };
 
         for (String topic : topics) {

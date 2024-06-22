@@ -32,6 +32,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
     private TextField airQualityField;
     private TextField lightIntensityField;
     private TextField rainSensorField;
+    private TextField modeField;
 
     private MQTTManager mqttManager;
 
@@ -64,6 +65,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         airQualityField = createTextField("AirQuality:");
         lightIntensityField = createTextField("LightIntensity:");
         rainSensorField = createTextField("Raining:");
+        modeField = createTextField("Current Mode:");
 
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
@@ -88,7 +90,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         comboBox.setWidth("min-content");
         setComboBoxData(comboBox);
 
-        comboBox2.setLabel("Mode:");
+        comboBox2.setLabel("New Mode:");
         layoutColumn2.setAlignSelf(FlexComponent.Alignment.CENTER, comboBox2);
         comboBox2.setWidth("min-content");
         setComboBoxModeData(comboBox2);
@@ -177,6 +179,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutRow2.add(layoutColumn2);
         layoutColumn2.add(comboBox);
         layoutColumn2.add(buttonPrimary);
+        layoutColumn2.add(modeField);
         layoutColumn2.add(comboBox2);
         layoutColumn2.add(buttonSecondary);
 
@@ -246,6 +249,8 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
                 lightIntensityField.setValue(value + " Lux");
             } else if (topic.endsWith("/RainSensor")) {
                 rainSensorField.setValue(Boolean.parseBoolean(value) ? "Es regnet gerade" : "Es regnet nicht");
+            } else if (topic.endsWith("/Mode")) {
+                modeField.setValue(value);
             }
         }));
     }
