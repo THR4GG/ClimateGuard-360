@@ -7,7 +7,13 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 import de.climateguard.application.views.climateguard.ClimateGuardView;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.UUID;
 
 public class MQTTManager implements MqttCallback {
 
@@ -16,23 +22,44 @@ public class MQTTManager implements MqttCallback {
     private String brokerUrl;
     private String clientId;
 
-    public MQTTManager(String brokerUrl, String clientId, ClimateGuardView view) throws MqttException {
-        this.brokerUrl = brokerUrl;
-        this.clientId = clientId;
+    public MQTTManager(ClimateGuardView view) throws MqttException {
         this.view = view;
+        this.clientId = generateClientId();
+        this.brokerUrl = loadBrokerUrl();
         connect();
     }
 
+    private String generateClientId() {
+        return "VaadinClient-" + UUID.randomUUID();
+    }
+
+    private String loadBrokerUrl() {
+        Properties properties = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+            if (input == null) {
+                throw new IOException("Unable to find application.properties");
+            }
+            properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return properties.getProperty("mqtt.broker.url");
+    }
+
     private void connect() throws MqttException {
+        if (brokerUrl == null || brokerUrl.isEmpty()) {
+            throw new MqttException(new Throwable("Broker URL is not set"));
+        }
+
         if (client != null && client.isConnected()) {
             client.disconnect();
         }
 
-        // Verwenden einer einzigartigen Client-ID für jede Verbindung
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
-        connOpts.setAutomaticReconnect(true); // Automatische Wiederverbindung aktivieren
+        connOpts.setAutomaticReconnect(true);
         client.setCallback(this);
         client.connect(connOpts);
 
@@ -57,14 +84,13 @@ public class MQTTManager implements MqttCallback {
 
     public void publishMessage(String topic, String message) throws MqttException {
         MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-        mqttMessage.setQos(2); // Höchste QoS für Zuverlässigkeit
+        mqttMessage.setQos(2);
         client.publish(topic, mqttMessage);
     }
 
     @Override
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost! MqttException: " + cause.getMessage());
-        // Verbindungswiederherstellung wird durch AutomaticReconnect-Option behandelt
     }
 
     @Override
@@ -76,6 +102,6 @@ public class MQTTManager implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        // Nicht verwendet
+        // Not used
     }
 }

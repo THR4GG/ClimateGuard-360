@@ -194,7 +194,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn3.add(buttonTertiary);
 
         try {
-            mqttManager = new MQTTManager("tcp://climateguard-360.local:1883", "Vaadin", this);
+            mqttManager = new MQTTManager(this);
             buttonPrimary.addClickListener(event -> {
                 String selectedValue = comboBox.getValue();
                 if (selectedValue != null) {
