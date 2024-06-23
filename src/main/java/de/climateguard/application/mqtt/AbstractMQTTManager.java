@@ -8,25 +8,22 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import de.climateguard.application.views.climateguard.ClimateGuardView;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
 
-public class MQTTManager implements MqttCallback {
+public abstract class AbstractMQTTManager implements MqttCallback {
 
-    private MqttClient client;
-    private ClimateGuardView view;
+    protected MqttClient client;
     private String brokerUrl;
     private String clientId;
 
-    public MQTTManager(ClimateGuardView view) throws MqttException {
-        this.view = view;
+    public AbstractMQTTManager() throws MqttException {
         this.clientId = generateClientId();
         this.brokerUrl = loadBrokerUrl();
         connect();
+        subscribeToTopic("#");
     }
 
     private String generateClientId() {
@@ -66,20 +63,17 @@ public class MQTTManager implements MqttCallback {
         System.out.println("Connected to MQTT broker: " + brokerUrl);
     }
 
-    public void subscribeToTopics(String baseTopic) throws MqttException {
-        String[] topics = {
-                baseTopic + "/Temperature",
-                baseTopic + "/Humidity",
-                baseTopic + "/Pressure",
-                baseTopic + "/AirQuality",
-                baseTopic + "/LightIntensity",
-                baseTopic + "/RainSensor",
-                baseTopic + "/Mode"
-        };
+    public void subscribeToTopic(String topic) throws MqttException {
+        System.out.println("Subscribing to topic: " + topic);
+        client.subscribe(topic);
+    }
 
-        for (String topic : topics) {
-            System.out.println("Subscribing to topic: " + topic);
-            client.subscribe(topic);
+    public void changeSubscription(String newTopic) throws MqttException {
+        if (client != null && client.isConnected()) {
+            client.unsubscribe("#");
+            System.out.println("Unsubscribed from all topics");
+            System.out.println("Subscribing to new topic: " + newTopic);
+            client.subscribe(newTopic);
         }
     }
 
@@ -92,17 +86,22 @@ public class MQTTManager implements MqttCallback {
     @Override
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost! MqttException: " + cause.getMessage());
-    }
-
-    @Override
-    public void messageArrived(String topic, MqttMessage message) throws Exception {
-        String payload = new String(message.getPayload());
-        System.out.println("Message received on topic " + topic + ": " + payload);
-        view.updateField(topic, payload);
+        cause.printStackTrace();
+        try {
+            System.out.println("Attempting to reconnect to MQTT broker...");
+            client.reconnect();
+        } catch (MqttException e) {
+            System.err.println("Reconnection failed: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
         // Not used
     }
+
+    // Abstrakte Methode für die spezifische Nachrichtenzustellung
+    @Override
+    public abstract void messageArrived(String topic, MqttMessage message) throws Exception;
 }

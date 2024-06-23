@@ -1,6 +1,5 @@
 package de.climateguard.application;
 
-
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.theme.Theme;
@@ -16,5 +15,4 @@ public class Application implements AppShellConfigurator {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
 }

@@ -5,6 +5,9 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -14,7 +17,8 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import de.climateguard.application.views.MainLayout;
-import de.climateguard.application.mqtt.MQTTManager;
+import de.climateguard.application.components.GaugeComponent;
+import de.climateguard.application.mqtt.ClimateGuardMQTTManager;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -34,11 +38,22 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
     private TextField rainSensorField;
     private TextField modeField;
 
-    private MQTTManager mqttManager;
+    private GaugeComponent temperatureGauge;
+    private GaugeComponent humidityGauge;
+    private GaugeComponent pressureGauge;
+    private GaugeComponent airQualityGauge;
+    private GaugeComponent lightIntensityGauge;
+
+    private H3 h3 = new H3();
+
+    Image rainSensorImage = new Image("images/noRain.png", "Regenindikator");
+
+    private ClimateGuardMQTTManager mqttManager;
 
     public ClimateGuardView() {
         HorizontalLayout layoutRow = new HorizontalLayout();
         H1 h1 = new H1();
+        H2 h2 = new H2();
         HorizontalLayout layoutRow2 = new HorizontalLayout();
         VerticalLayout layoutColumn2 = new VerticalLayout();
         ComboBox<String> comboBox = new ComboBox<>();
@@ -56,6 +71,23 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         VerticalLayout layoutColumn7 = new VerticalLayout();
         VerticalLayout layoutColumn8 = new VerticalLayout();
         VerticalLayout layoutColumn9 = new VerticalLayout();
+
+        // Gauges
+        temperatureGauge = new GaugeComponent("Temperature", "*C", 0, -20, 50, "#03a100", "#03a100",
+                "#ff0000", 10, 30);
+        humidityGauge = new GaugeComponent("Humidity", "%", 0, 0, 100, "#ffdd00", "#03a100", "#0000FF",
+                40, 70);
+        pressureGauge = new GaugeComponent("Pressure", "hPa", 0, 0, 3000, "#FF0000", "#ffdd00",
+                "#03a100", 500, 800);
+        airQualityGauge = new GaugeComponent("AirQuality", "ppm", 0, 0, 2000, "#03a100", "#ffdd00",
+                "#ff0000", 400, 1500);
+        lightIntensityGauge = new GaugeComponent("LightIntensity", "Lux", 0, 0, 100, "#ff0000",
+                "#03a100",
+                "#ffdd00", 20, 60);
+
+        // Images
+        rainSensorImage.setWidth("10vw");
+        rainSensorImage.getStyle().set("margin", "3vw auto 0 auto");
 
         // Textfelder initialisieren
         temperatureField = createTextField("Temperature:");
@@ -75,6 +107,8 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutRow.setAlignItems(FlexComponent.Alignment.CENTER);
         layoutRow.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         h1.setText("ClimateGuard");
+        h2.setText("Regensensor");
+        h3.setText("Es regnet nicht.");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, h1);
         h1.setWidth("max-content");
 
@@ -117,7 +151,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn4.getStyle().set("flex-grow", "1");
         layoutColumn4.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         layoutColumn4.setAlignItems(FlexComponent.Alignment.CENTER);
-        layoutColumn4.add(temperatureField);
+        layoutColumn4.add(temperatureGauge);
 
         layoutColumn5.setHeightFull();
         layoutRow3.setFlexGrow(1.0, layoutColumn5);
@@ -125,7 +159,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn5.getStyle().set("flex-grow", "1");
         layoutColumn5.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         layoutColumn5.setAlignItems(FlexComponent.Alignment.CENTER);
-        layoutColumn5.add(humidityField);
+        layoutColumn5.add(humidityGauge);
 
         layoutColumn6.setHeightFull();
         layoutRow3.setFlexGrow(1.0, layoutColumn6);
@@ -133,7 +167,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn6.getStyle().set("flex-grow", "1");
         layoutColumn6.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         layoutColumn6.setAlignItems(FlexComponent.Alignment.CENTER);
-        layoutColumn6.add(pressureField);
+        layoutColumn6.add(pressureGauge);
 
         layoutRow4.setWidthFull();
         layoutColumn3.setFlexGrow(1.0, layoutRow4);
@@ -147,7 +181,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn7.getStyle().set("flex-grow", "1");
         layoutColumn7.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         layoutColumn7.setAlignItems(FlexComponent.Alignment.CENTER);
-        layoutColumn7.add(airQualityField);
+        layoutColumn7.add(airQualityGauge);
 
         layoutColumn8.setHeightFull();
         layoutRow4.setFlexGrow(1.0, layoutColumn8);
@@ -155,7 +189,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn8.getStyle().set("flex-grow", "1");
         layoutColumn8.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         layoutColumn8.setAlignItems(FlexComponent.Alignment.CENTER);
-        layoutColumn8.add(lightIntensityField);
+        layoutColumn8.add(lightIntensityGauge);
 
         layoutColumn9.setHeightFull();
         layoutRow4.setFlexGrow(1.0, layoutColumn9);
@@ -163,7 +197,9 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutColumn9.getStyle().set("flex-grow", "1");
         layoutColumn9.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         layoutColumn9.setAlignItems(FlexComponent.Alignment.CENTER);
-        layoutColumn9.add(rainSensorField);
+        layoutColumn9.add(h2);
+        layoutColumn9.add(rainSensorImage);
+        layoutColumn9.add(h3);
 
         getContent().add(layoutRow);
         layoutRow.add(h1);
@@ -188,7 +224,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         layoutRow4.add(layoutColumn9);
 
         try {
-            mqttManager = new MQTTManager(this);
+            mqttManager = new ClimateGuardMQTTManager(this);
             buttonPrimary.addClickListener(event -> {
                 String selectedValue = comboBox.getValue();
                 if (selectedValue != null) {
@@ -229,21 +265,79 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
     public void updateField(String topic, String value) {
         getUI().ifPresent(ui -> ui.access(() -> {
             if (topic.endsWith("/Temperature")) {
-                temperatureField.setValue(value + " °C");
+                if (isNumeric(value)) {
+                    temperatureField.setValue(value + " °C");
+                }
             } else if (topic.endsWith("/Humidity")) {
-                humidityField.setValue(value + " %");
+                if (isNumeric(value)) {
+                    humidityField.setValue(value + " %");
+                }
             } else if (topic.endsWith("/Pressure")) {
-                pressureField.setValue(value + " hPa");
+                if (isNumeric(value)) {
+                    pressureField.setValue(value + " hPa");
+                }
             } else if (topic.endsWith("/AirQuality")) {
-                airQualityField.setValue(value + " ppm");
+                if (isNumeric(value)) {
+                    airQualityField.setValue(value + " ppm");
+                }
             } else if (topic.endsWith("/LightIntensity")) {
-                lightIntensityField.setValue(value + " Lux");
+                if (isNumeric(value)) {
+                    lightIntensityField.setValue(value + " Lux");
+                }
             } else if (topic.endsWith("/RainSensor")) {
-                rainSensorField.setValue(Boolean.parseBoolean(value) ? "Es regnet gerade" : "Es regnet nicht");
+                if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+                    rainSensorField.setValue(Boolean.parseBoolean(value) ? "Es regnet gerade" : "Es regnet nicht");
+                }
             } else if (topic.endsWith("/Mode")) {
                 modeField.setValue(value);
             }
         }));
+    }
+
+    public void updateGauge(String topic, String value) {
+        getUI().ifPresent(ui -> ui.access(() -> {
+            if (topic.endsWith("/Temperature")) {
+                if (isNumeric(value)) {
+                    temperatureGauge.setValue(Float.parseFloat(value));
+                }
+            } else if (topic.endsWith("/Humidity")) {
+                if (isNumeric(value)) {
+                    humidityGauge.setValue(Float.parseFloat(value));
+                }
+            } else if (topic.endsWith("/Pressure")) {
+                if (isNumeric(value)) {
+                    pressureGauge.setValue(Float.parseFloat(value));
+                }
+            } else if (topic.endsWith("/AirQuality")) {
+                if (isNumeric(value)) {
+                    airQualityGauge.setValue(Float.parseFloat(value));
+                }
+            } else if (topic.endsWith("/LightIntensity")) {
+                if (isNumeric(value)) {
+                    lightIntensityGauge.setValue(Float.parseFloat(value));
+                }
+            } else if (topic.endsWith("/RainSensor")) {
+                if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+                    h3.setText(Boolean.parseBoolean(value) ? "Es regnet gerade" : "Es regnet nicht");
+                    if (Boolean.parseBoolean(value)) {
+                        rainSensorImage.setSrc("images/rain.png");
+                    } else {
+                        rainSensorImage.setSrc("images/noRain.png");
+                    }
+                }
+            } else if (topic.endsWith("/Mode")) {
+                modeField.setValue(value);
+            }
+        }));
+    }
+
+    private boolean isNumeric(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     record Item(String value, String label, Boolean disabled) {
