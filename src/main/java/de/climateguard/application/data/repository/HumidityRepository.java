@@ -1,9 +1,13 @@
 package de.climateguard.application.data.repository;
 
 import de.climateguard.application.data.Humidity;
+
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HumidityRepository extends SensorDataRepository<Humidity> {
-    // Zus�tzliche spezialisierte Methoden k�nnen hier hinzugef�gt werden
+    List<Humidity> findByDate(LocalDate date);
 }

@@ -18,6 +18,8 @@ import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import de.climateguard.application.views.MainLayout;
 import de.climateguard.application.components.GaugeComponent;
+import de.climateguard.application.data.WeatherStation;
+import de.climateguard.application.data.repository.WeatherStationRepository;
 import de.climateguard.application.mqtt.ClimateGuardMQTTManager;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -29,6 +31,8 @@ import java.util.List;
 @Route(value = "", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 public class ClimateGuardView extends Composite<VerticalLayout> {
+
+    private final WeatherStationRepository weatherStationRepository;
 
     private TextField temperatureField;
     private TextField humidityField;
@@ -50,7 +54,9 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
 
     private ClimateGuardMQTTManager mqttManager;
 
-    public ClimateGuardView() {
+    public ClimateGuardView(WeatherStationRepository weatherStationRepository) {
+        this.weatherStationRepository = weatherStationRepository;
+
         HorizontalLayout layoutRow = new HorizontalLayout();
         H1 h1 = new H1();
         H2 h2 = new H2();
@@ -73,7 +79,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         VerticalLayout layoutColumn9 = new VerticalLayout();
 
         // Gauges
-        temperatureGauge = new GaugeComponent("Temperature", "*C", 0, -20, 50, "#03a100", "#03a100",
+        temperatureGauge = new GaugeComponent("Temperature", "*C", 0, -20, 50, "#0051ff", "#03a100",
                 "#ff0000", 10, 30);
         humidityGauge = new GaugeComponent("Humidity", "%", 0, 0, 100, "#ffdd00", "#03a100", "#0000FF",
                 40, 70);
@@ -121,7 +127,8 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         comboBox.setLabel("ClimateGuard Station:");
         layoutColumn2.setAlignSelf(FlexComponent.Alignment.CENTER, comboBox);
         comboBox.setWidth("min-content");
-        setComboBoxData(comboBox);
+        // setComboBoxData(comboBox);
+        setComboBoxStationData(comboBox);
 
         comboBox2.setLabel("New Mode:");
         layoutColumn2.setAlignSelf(FlexComponent.Alignment.CENTER, comboBox2);
@@ -353,6 +360,16 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
                 .filter(sample -> sample.value().equals(item))
                 .findFirst()
                 .map(Item::label)
+                .orElse("Unknown"));
+    }
+
+    private void setComboBoxStationData(ComboBox<String> comboBox) {
+        List<WeatherStation> stations = weatherStationRepository.findAll();
+        comboBox.setItems(stations.stream().map(WeatherStation::getStationId).toList());
+        comboBox.setItemLabelGenerator(stationId -> stations.stream()
+                .filter(station -> station.getStationId().equals(stationId))
+                .findFirst()
+                .map(WeatherStation::getName)
                 .orElse("Unknown"));
     }
 

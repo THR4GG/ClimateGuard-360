@@ -4,13 +4,12 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.UI;
 
 public class RadarChartComponent extends Composite<VerticalLayout> {
     private final Div chartDiv;
     private final H2 label;
 
-    public RadarChartComponent(int[] initialValues) {
+    public RadarChartComponent(double[] initialValues) {
         // Label hinzufügen
         label = new H2("SQL Daten");
         label.getStyle().set("color", "white"); // Setzt die Textfarbe auf Weiß
@@ -32,13 +31,12 @@ public class RadarChartComponent extends Composite<VerticalLayout> {
 
         getElement().executeJs(
                 "var chartContainer = document.querySelector('#" + chartDiv.getId().orElse("") + "');" +
-                        "chartContainer.style.boxShadow = 'none';" + 
-                        "chartContainer.style.border = 'none';" + 
-                        "chartContainer.style.padding = '0';" + 
-                        "chartContainer.style.margin = 'auto';" 
-        );
+                        "chartContainer.style.boxShadow = 'none';" +
+                        "chartContainer.style.border = 'none';" +
+                        "chartContainer.style.padding = '0';" +
+                        "chartContainer.style.margin = 'auto';");
 
-        UI.getCurrent().getPage().executeJs(
+        getElement().executeJs(
                 "var options = {" +
                         "  series: [{" +
                         "    name: 'Series 1'," +
@@ -48,7 +46,7 @@ public class RadarChartComponent extends Composite<VerticalLayout> {
                         "  chart: {" +
                         "    height: '100%'," +
                         "    type: 'radar'," +
-                        "    toolbar: { show: false }, " + 
+                        "    toolbar: { show: false }, " +
                         "    animations: { " +
                         "      enabled: true, " +
                         "      easing: 'easeinout', " +
@@ -65,25 +63,24 @@ public class RadarChartComponent extends Composite<VerticalLayout> {
                         "    ]," +
                         "    labels: { " +
                         "      style: { " +
-                        "        colors: Array(5).fill('white'), " + 
-                        "        fontSize: '16px' " + 
+                        "        colors: Array(5).fill('white'), " +
+                        "        fontSize: '16px' " +
                         "      }" +
                         "    }" +
                         "  }," +
                         "  yaxis: { " +
-                        "    labels: { style: { colors: 'white' } }, " + 
-                        "    show: false " + 
+                        "    labels: { style: { colors: 'white' } }, " +
+                        "    show: false " +
                         "  }, " +
-                        "  title: { text: '' }" + 
+                        "  title: { text: '' }" +
                         "};" +
                         "var chart = new ApexCharts(document.querySelector('#" + chartDiv.getId().orElse("")
                         + "'), options);" +
                         "chart.render();" +
-                        "window['" + chartDiv.getId().orElse("") + "'] = chart;" 
-        );
+                        "window['" + chartDiv.getId().orElse("") + "'] = chart;");
     }
 
-    public void setValues(int[] newValues) {
+    public void setValues(double[] newValues) {
         if (newValues.length != 5) {
             throw new IllegalArgumentException("Die Anzahl der Werte muss 5 sein.");
         }
@@ -105,7 +102,7 @@ public class RadarChartComponent extends Composite<VerticalLayout> {
                         "    labels: { " +
                         "      style: { " +
                         "        colors: Array(5).fill('white'), " +
-                        "        fontSize: '16px' " + 
+                        "        fontSize: '16px' " +
                         "      }" +
                         "    }" +
                         "  }" +

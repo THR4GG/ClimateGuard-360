@@ -1,16 +1,13 @@
 package de.climateguard.application.data;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.*;
+
 @MappedSuperclass
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "sensor_type")
 public abstract class SensorData {
 
     @Id
