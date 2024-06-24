@@ -98,10 +98,8 @@ public abstract class AbstractMQTTManager implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        // Not used
     }
 
-    // Abstrakte Methode für die spezifische Nachrichtenzustellung
     @Override
     public abstract void messageArrived(String topic, MqttMessage message) throws Exception;
 }

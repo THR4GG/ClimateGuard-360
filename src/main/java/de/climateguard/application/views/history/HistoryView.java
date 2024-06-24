@@ -57,7 +57,6 @@ public class HistoryView extends Composite<VerticalLayout> {
         this.weatherStationRepository = weatherStationRepository;
         this.historyDataService = historyDataService;
 
-        // UI-Elemente initialisieren
         comboBox = new ComboBox<>();
         comboBox2 = new ComboBox<>();
         datePicker = new DatePicker();
@@ -74,7 +73,6 @@ public class HistoryView extends Composite<VerticalLayout> {
         setComboBoxStationData(comboBox);
         setComboBoxData(comboBox2);
 
-        // RadarChartComponent initialisieren
         radarChart = new RadarChartComponent(new double[] { 0.0, 0.0, 0.0, 0.0, 0.0 });
         layoutColumn4.add(radarChart);
         layoutColumn4.setVisible(false);
@@ -179,7 +177,7 @@ public class HistoryView extends Composite<VerticalLayout> {
 
         String selectedStation = comboBox.getValue();
         String selectedData = comboBox2.getValue();
-        LocalDate selectedDate = datePicker.getValue(); // YYYY-MM-DD
+        LocalDate selectedDate = datePicker.getValue(); 
 
         loadGridData(selectedStation, selectedData, selectedDate);
     }

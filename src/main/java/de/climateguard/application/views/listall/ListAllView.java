@@ -125,7 +125,7 @@ public class ListAllView extends Composite<VerticalLayout> {
 
     private void clearGrid() {
         messageList.clear();
-        mqttGrid.setItems(messageList); // Leert das Grid
+        mqttGrid.setItems(messageList); 
     }
 
     private void subscribeToTopic(String topic) {
@@ -139,10 +139,9 @@ public class ListAllView extends Composite<VerticalLayout> {
     public void addMessageToGrid(MqttMessageDetails message) {
         messageList.add(message);
 
-        // Sicherstellen, dass die Aktualisierung im UI-Thread durchgeführt wird
         getUI().ifPresent(ui -> ui.access(() -> {
-            mqttGrid.setItems(new ArrayList<>(messageList)); // Setzen Sie eine neue Liste, um das Grid zu aktualisieren
-            mqttGrid.getDataProvider().refreshAll(); // Datenanbieter aktualisieren
+            mqttGrid.setItems(new ArrayList<>(messageList)); 
+            mqttGrid.getDataProvider().refreshAll(); 
         }));
     }
 }
