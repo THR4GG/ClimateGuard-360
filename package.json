@@ -15,9 +15,11 @@
     "@vaadin/vaadin-material-styles": "24.4.0",
     "@vaadin/vaadin-themable-mixin": "24.4.0",
     "@vaadin/vaadin-usage-statistics": "2.1.2",
+    "apexcharts": "3.49.0",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
     "lit": "3.1.4",
+    "onecolor": "4.1.0",
     "proj4": "2.11.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -37,7 +39,7 @@
     "strip-css-comments": "5.0.0",
     "transform-ast": "2.4.4",
     "typescript": "5.4.5",
-    "vite": "5.3.1",
+    "vite": "5.2.13",
     "vite-plugin-checker": "0.6.4",
     "workbox-build": "7.1.1",
     "workbox-core": "7.1.0",
@@ -57,9 +59,11 @@
       "@vaadin/vaadin-material-styles": "24.4.0",
       "@vaadin/vaadin-themable-mixin": "24.4.0",
       "@vaadin/vaadin-usage-statistics": "2.1.2",
+      "apexcharts": "3.49.0",
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
       "lit": "3.1.4",
+      "onecolor": "4.1.0",
       "proj4": "2.11.0",
       "react": "18.3.1",
       "react-dom": "18.3.1",
@@ -79,13 +83,13 @@
       "strip-css-comments": "5.0.0",
       "transform-ast": "2.4.4",
       "typescript": "5.4.5",
-      "vite": "5.3.1",
+      "vite": "5.2.13",
       "vite-plugin-checker": "0.6.4",
       "workbox-build": "7.1.1",
       "workbox-core": "7.1.0",
       "workbox-precaching": "7.1.0"
     },
-    "hash": "1109c7619a8c40f47c67a85c49bf9415ab135598b514cd74ec14a291714276d4"
+    "hash": "aaa0a22820863cc676d8352278f4994213b0ab428fb1755420480c9c2ae579a1"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -106,6 +110,8 @@
     "proj4": "$proj4",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
-    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles"
+    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
+    "apexcharts": "$apexcharts",
+    "onecolor": "$onecolor"
   }
 }
