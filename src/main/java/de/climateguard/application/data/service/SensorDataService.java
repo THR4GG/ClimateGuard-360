@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class SensorDataService {
@@ -25,7 +23,7 @@ public class SensorDataService {
     @Autowired
     private TemperatureRepository temperatureRepository;
 
-    public void saveAirQuality(String stationId, int value, LocalDateTime timestamp) {
+    public void saveAirQuality(String stationId, double value, LocalDateTime timestamp) {
         AirQuality airQuality = new AirQuality();
         airQuality.setStationId(stationId);
         airQuality.setValue(value);

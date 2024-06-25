@@ -53,7 +53,7 @@ public class MQTTDataProcessor extends AbstractMQTTManager {
 
         switch (tableName.toLowerCase()) {
             case "airquality":
-                sensorDataService.saveAirQuality(stationId, Integer.parseInt(payload), now);
+                sensorDataService.saveAirQuality(stationId, Double.parseDouble(payload), now);
                 break;
             case "humidity":
                 sensorDataService.saveHumidity(stationId, Double.parseDouble(payload), now);
