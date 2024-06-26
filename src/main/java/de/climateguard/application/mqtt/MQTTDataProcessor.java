@@ -11,18 +11,38 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
+/**
+ * Processes incoming MQTT messages and saves sensor data to the database.
+ * Extends the {@link AbstractMQTTManager} to handle specific topics and
+ * messages.
+ */
 @Service
 public class MQTTDataProcessor extends AbstractMQTTManager {
 
     @Autowired
     private WeatherStationRepository weatherStationRepository;
+
     @Autowired
     private SensorDataService sensorDataService;
 
+    /**
+     * Constructs a new MQTTDataProcessor.
+     * Initializes the MQTT manager.
+     *
+     * @throws MqttException if there is an issue with MQTT connection
+     */
     public MQTTDataProcessor() throws MqttException {
         super();
     }
 
+    /**
+     * Handles incoming MQTT messages.
+     * Parses the topic and payload, then saves the data to the appropriate table.
+     *
+     * @param topic   the topic on which the message was received
+     * @param message the received message
+     * @throws Exception if there is an issue processing the message
+     */
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         String[] topicParts = topic.split("/");

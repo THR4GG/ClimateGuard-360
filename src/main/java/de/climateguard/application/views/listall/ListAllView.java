@@ -21,6 +21,11 @@ import de.climateguard.application.views.MainLayout;
 import de.climateguard.application.mqtt.MqttMessageDetails;
 import de.climateguard.application.mqtt.ListAllMQTTManager;
 
+/**
+ * This class represents the view for listing all MQTT messages.
+ * It initializes the view components, sets up the MQTT manager, and handles the
+ * UI interactions.
+ */
 @PageTitle("List All")
 @Route(value = "list-all", layout = MainLayout.class)
 public class ListAllView extends Composite<VerticalLayout> {
@@ -35,6 +40,10 @@ public class ListAllView extends Composite<VerticalLayout> {
     private HorizontalLayout layoutRow3 = new HorizontalLayout();
     private VerticalLayout layoutColumn3 = new VerticalLayout();
 
+    /**
+     * Constructor for ListAllView.
+     * Initializes the view and sets up the MQTT manager.
+     */
     public ListAllView() {
         initializeView();
         setupMqttManager();
@@ -97,6 +106,10 @@ public class ListAllView extends Composite<VerticalLayout> {
         });
     }
 
+    /**
+     * Initializes the view components, including the grid for displaying MQTT
+     * messages.
+     */
     private void initializeView() {
         mqttGrid = new Grid<>(MqttMessageDetails.class);
 
@@ -112,6 +125,9 @@ public class ListAllView extends Composite<VerticalLayout> {
         layoutColumn3.add(mqttGrid);
     }
 
+    /**
+     * Sets up the MQTT manager and subscribes to the default topic.
+     */
     private void setupMqttManager() {
         try {
             this.mqttManager = new ListAllMQTTManager(this);
@@ -123,11 +139,19 @@ public class ListAllView extends Composite<VerticalLayout> {
         }
     }
 
+    /**
+     * Clears the grid by removing all messages from the message list.
+     */
     private void clearGrid() {
         messageList.clear();
-        mqttGrid.setItems(messageList); 
+        mqttGrid.setItems(messageList);
     }
 
+    /**
+     * Subscribes to the specified MQTT topic.
+     *
+     * @param topic the MQTT topic to subscribe to
+     */
     private void subscribeToTopic(String topic) {
         try {
             mqttManager.changeSubscription(topic);
@@ -136,12 +160,17 @@ public class ListAllView extends Composite<VerticalLayout> {
         }
     }
 
+    /**
+     * Adds a new MQTT message to the grid.
+     *
+     * @param message the MQTT message to add
+     */
     public void addMessageToGrid(MqttMessageDetails message) {
         messageList.add(message);
 
         getUI().ifPresent(ui -> ui.access(() -> {
-            mqttGrid.setItems(new ArrayList<>(messageList)); 
-            mqttGrid.getDataProvider().refreshAll(); 
+            mqttGrid.setItems(new ArrayList<>(messageList));
+            mqttGrid.getDataProvider().refreshAll();
         }));
     }
 }

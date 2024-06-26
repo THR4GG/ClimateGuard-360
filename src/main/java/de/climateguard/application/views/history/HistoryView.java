@@ -25,12 +25,17 @@ import de.climateguard.application.data.service.HistoryDataService.GridItem;
 import de.climateguard.application.views.MainLayout;
 import jakarta.annotation.PostConstruct;
 
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class represents the view for displaying the historical data of weather
+ * stations.
+ * It initializes the view components, sets up the grid and handles the UI
+ * interactions.
+ */
 @PageTitle("History")
 @Route(value = "history", layout = MainLayout.class)
 @UIScope
@@ -53,6 +58,13 @@ public class HistoryView extends Composite<VerticalLayout> {
 
     List<HistoryDataService.GridItem> gridItems = new ArrayList<>();
 
+    /**
+     * Constructor for HistoryView.
+     * Initializes the repositories and UI components.
+     *
+     * @param weatherStationRepository the repository for weather station data
+     * @param historyDataService       the service for retrieving historical data
+     */
     public HistoryView(WeatherStationRepository weatherStationRepository, HistoryDataService historyDataService) {
         this.weatherStationRepository = weatherStationRepository;
         this.historyDataService = historyDataService;
@@ -68,6 +80,10 @@ public class HistoryView extends Composite<VerticalLayout> {
         setupUI();
     }
 
+    /**
+     * Initializes the view after the construction is complete.
+     * Sets up the combo boxes, radar chart, and grid.
+     */
     @PostConstruct
     private void init() {
         setComboBoxStationData(comboBox);
@@ -80,6 +96,9 @@ public class HistoryView extends Composite<VerticalLayout> {
         setupGrid();
     }
 
+    /**
+     * Sets up the UI components for the view.
+     */
     private void setupUI() {
         HorizontalLayout layoutRow = new HorizontalLayout();
         H1 h1 = new H1();
@@ -149,6 +168,9 @@ public class HistoryView extends Composite<VerticalLayout> {
         buttonSecondary.addClickListener(event -> clearGrid());
     }
 
+    /**
+     * Sets up the grid for displaying historical data.
+     */
     private void setupGrid() {
         grid.removeAllColumns();
 
@@ -161,11 +183,17 @@ public class HistoryView extends Composite<VerticalLayout> {
         grid.setItems(List.of());
     }
 
+    /**
+     * Clears the grid by removing all items.
+     */
     private void clearGrid() {
         List<GridItem> items = historyDataService.clearData();
         grid.setItems(items);
     }
 
+    /**
+     * Processes the form submission and loads data based on selected values.
+     */
     private void processFormSubmission() {
         if (comboBox.getValue() == null || comboBox2.getValue() == null || datePicker.getValue() == null) {
             notification = new Notification("Please fill out all fields", 3000);
@@ -177,11 +205,18 @@ public class HistoryView extends Composite<VerticalLayout> {
 
         String selectedStation = comboBox.getValue();
         String selectedData = comboBox2.getValue();
-        LocalDate selectedDate = datePicker.getValue(); 
+        LocalDate selectedDate = datePicker.getValue();
 
         loadGridData(selectedStation, selectedData, selectedDate);
     }
 
+    /**
+     * Loads the data into the grid based on selected station, data type, and date.
+     *
+     * @param station the selected weather station
+     * @param data    the selected data type
+     * @param date    the selected date
+     */
     private void loadGridData(String station, String data, LocalDate date) {
         List<GridItem> items;
 
@@ -204,6 +239,11 @@ public class HistoryView extends Composite<VerticalLayout> {
         grid.setItems(items);
     }
 
+    /**
+     * Sets the data for the station combo box.
+     *
+     * @param comboBox the combo box for selecting a weather station
+     */
     private void setComboBoxStationData(ComboBox<String> comboBox) {
         List<WeatherStation> stations = weatherStationRepository.findAll();
         comboBox.setItems(stations.stream().map(WeatherStation::getStationId).toList());
@@ -214,6 +254,11 @@ public class HistoryView extends Composite<VerticalLayout> {
                 .orElse("Unknown"));
     }
 
+    /**
+     * Sets the data for the data type combo box.
+     *
+     * @param comboBox the combo box for selecting a data type
+     */
     private void setComboBoxData(ComboBox<String> comboBox) {
         List<Item> items = new ArrayList<>();
 
@@ -237,6 +282,12 @@ public class HistoryView extends Composite<VerticalLayout> {
                 .orElse("Unknown"));
     }
 
+    /**
+     * Converts a table name to a user-friendly label.
+     *
+     * @param tableName the name of the table
+     * @return the user-friendly label for the table
+     */
     private String convertTableNameToLabel(String tableName) {
         return switch (tableName) {
             case "Temperature" -> "Temperatures";
@@ -248,6 +299,9 @@ public class HistoryView extends Composite<VerticalLayout> {
         };
     }
 
+    /**
+     * Record class representing an item in the combo box.
+     */
     record Item(String value, String label, Boolean disabled) {
     }
 }

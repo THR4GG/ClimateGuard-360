@@ -1,6 +1,5 @@
 package de.climateguard.application.views;
 
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Div;
@@ -43,6 +42,13 @@ public class MainLayout extends AppLayout {
 
         private final Class<? extends Component> view;
 
+        /**
+         * Constructs a new MenuItemInfo.
+         *
+         * @param menuTitle the title of the menu item
+         * @param icon      the icon to display next to the menu title
+         * @param view      the view class to navigate to when the menu item is clicked
+         */
         public MenuItemInfo(String menuTitle, Component icon, Class<? extends Component> view) {
             this.view = view;
             RouterLink link = new RouterLink();
@@ -62,16 +68,30 @@ public class MainLayout extends AppLayout {
             add(link);
         }
 
+        /**
+         * Gets the view class associated with the menu item.
+         *
+         * @return the view class
+         */
         public Class<?> getView() {
             return view;
         }
 
     }
 
+    /**
+     * Constructs the MainLayout.
+     * Adds the header content to the navigation bar.
+     */
     public MainLayout() {
         addToNavbar(createHeaderContent());
     }
 
+    /**
+     * Creates the header content for the layout.
+     *
+     * @return the header component
+     */
     private Component createHeaderContent() {
         Header header = new Header();
         header.addClassNames(BoxSizing.BORDER, Display.FLEX, FlexDirection.COLUMN, Width.FULL);
@@ -93,21 +113,22 @@ public class MainLayout extends AppLayout {
 
         for (MenuItemInfo menuItem : createMenuItems()) {
             list.add(menuItem);
-
         }
 
         header.add(layout, nav);
         return header;
     }
 
+    /**
+     * Creates the menu items for the navigation bar.
+     *
+     * @return an array of MenuItemInfo objects
+     */
     private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{ //
+        return new MenuItemInfo[] { //
                 new MenuItemInfo("ClimateGuard", LineAwesomeIcon.PENCIL_RULER_SOLID.create(), ClimateGuardView.class), //
-
                 new MenuItemInfo("History", LineAwesomeIcon.PENCIL_RULER_SOLID.create(), HistoryView.class), //
-
                 new MenuItemInfo("List All", LineAwesomeIcon.PENCIL_RULER_SOLID.create(), ListAllView.class), //
-
         };
     }
 

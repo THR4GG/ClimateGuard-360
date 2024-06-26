@@ -27,6 +27,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents the ClimateGuard view.
+ * It initializes the UI components, sets up MQTT communication, and handles
+ * user interactions.
+ */
 @PageTitle("ClimateGuard")
 @Route(value = "", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
@@ -54,6 +59,12 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
 
     private ClimateGuardMQTTManager mqttManager;
 
+    /**
+     * Constructor for ClimateGuardView.
+     * Initializes the UI components and sets up MQTT communication.
+     *
+     * @param weatherStationRepository the repository for weather station data
+     */
     public ClimateGuardView(WeatherStationRepository weatherStationRepository) {
         this.weatherStationRepository = weatherStationRepository;
 
@@ -95,7 +106,7 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         rainSensorImage.setWidth("10vw");
         rainSensorImage.getStyle().set("margin", "3vw auto 0 auto");
 
-        // Textfelder initialisieren
+        // Initialize text fields
         temperatureField = createTextField("Temperature:");
         humidityField = createTextField("Humidity:");
         pressureField = createTextField("Pressure:");
@@ -127,7 +138,6 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         comboBox.setLabel("ClimateGuard Station:");
         layoutColumn2.setAlignSelf(FlexComponent.Alignment.CENTER, comboBox);
         comboBox.setWidth("min-content");
-        // setComboBoxData(comboBox);
         setComboBoxStationData(comboBox);
 
         comboBox2.setLabel("New Mode:");
@@ -262,6 +272,12 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         }
     }
 
+    /**
+     * Creates a read-only TextField with the specified label.
+     *
+     * @param label the label for the TextField
+     * @return the created TextField
+     */
     private TextField createTextField(String label) {
         TextField textField = new TextField(label);
         textField.setWidth("min-content");
@@ -269,6 +285,13 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         return textField;
     }
 
+    /**
+     * Updates the value of the appropriate TextField based on the MQTT topic and
+     * value.
+     *
+     * @param topic the MQTT topic
+     * @param value the value to update
+     */
     public void updateField(String topic, String value) {
         getUI().ifPresent(ui -> ui.access(() -> {
             if (topic.endsWith("/Temperature")) {
@@ -301,6 +324,13 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         }));
     }
 
+    /**
+     * Updates the value of the appropriate GaugeComponent based on the MQTT topic
+     * and value.
+     *
+     * @param topic the MQTT topic
+     * @param value the value to update
+     */
     public void updateGauge(String topic, String value) {
         getUI().ifPresent(ui -> ui.access(() -> {
             if (topic.endsWith("/Temperature")) {
@@ -338,6 +368,12 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         }));
     }
 
+    /**
+     * Checks if the given value is numeric.
+     *
+     * @param value the value to check
+     * @return true if the value is numeric, false otherwise
+     */
     private boolean isNumeric(String value) {
         try {
             Double.parseDouble(value);
@@ -347,22 +383,17 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
         }
     }
 
+    /**
+     * Record class representing an item in the combo box.
+     */
     record Item(String value, String label, Boolean disabled) {
     }
 
-    private void setComboBoxData(ComboBox<String> comboBox) {
-        List<Item> items = new ArrayList<>();
-        items.add(new Item("A8:42:E3:A9:55:38", "ClimateGuard", null));
-        comboBox.setItems(items.stream().map(Item::value).toList());
-        comboBox.setHelperText("Select a ClimateGuard Station");
-        comboBox.setTooltipText("Station");
-        comboBox.setItemLabelGenerator(item -> items.stream()
-                .filter(sample -> sample.value().equals(item))
-                .findFirst()
-                .map(Item::label)
-                .orElse("Unknown"));
-    }
-
+    /**
+     * Sets the data for the station combo box.
+     *
+     * @param comboBox the combo box for selecting a weather station
+     */
     private void setComboBoxStationData(ComboBox<String> comboBox) {
         List<WeatherStation> stations = weatherStationRepository.findAll();
         comboBox.setItems(stations.stream().map(WeatherStation::getStationId).toList());
@@ -373,6 +404,11 @@ public class ClimateGuardView extends Composite<VerticalLayout> {
                 .orElse("Unknown"));
     }
 
+    /**
+     * Sets the data for the mode combo box.
+     *
+     * @param comboBox the combo box for selecting a mode
+     */
     private void setComboBoxModeData(ComboBox<String> comboBox) {
         List<Item> items = new ArrayList<>();
         items.add(new Item("INDOOR", "Indoor", null));

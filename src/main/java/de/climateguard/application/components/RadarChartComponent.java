@@ -5,14 +5,22 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+/**
+ * A component that displays a radar chart using ApexCharts.
+ */
 public class RadarChartComponent extends Composite<VerticalLayout> {
     private final Div chartDiv;
     private final H2 label;
 
+    /**
+     * Constructs a new RadarChartComponent.
+     *
+     * @param initialValues the initial values to display on the radar chart
+     */
     public RadarChartComponent(double[] initialValues) {
         // Label hinzufügen
         label = new H2("SQL Daten");
-        label.getStyle().set("color", "white"); // Setzt die Textfarbe auf Weiß
+        label.getStyle().set("color", "white");
         label.getStyle().set("text-align", "center");
         label.getStyle().set("margin", "auto");
         getContent().add(label);
@@ -80,6 +88,11 @@ public class RadarChartComponent extends Composite<VerticalLayout> {
                         "window['" + chartDiv.getId().orElse("") + "'] = chart;");
     }
 
+    /**
+     * Sets new values for the radar chart.
+     *
+     * @param newValues the new values to set on the radar chart
+     */
     public void setValues(double[] newValues) {
         if (newValues.length != 5) {
             throw new IllegalArgumentException("Die Anzahl der Werte muss 5 sein.");
